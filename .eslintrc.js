@@ -73,7 +73,7 @@ module.exports = {
     'no-trailing-spaces': 'warn',
     'no-unmodified-loop-condition': 'error',
     'no-unused-expressions': 'error',
-    'no-unused-vars': ['warn', { 'args': 'all' }],
+    'no-unused-vars': ['warn', { 'args': 'after-used' }],
     'no-useless-call': 'error',
     'no-useless-concat': 'error',
     'no-useless-escape': 'error',

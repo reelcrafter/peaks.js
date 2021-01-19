@@ -146,7 +146,7 @@ define([
         peaks.player.seek(time);
       },
 
-      onMouseMove: function(mousePosX) {
+      onMouseMove: function(eventType, mousePosX) {
         mousePosX = Utils.clamp(mousePosX, 0, self._width);
 
         var time = self.pixelsToTime(mousePosX);
