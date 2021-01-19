@@ -75,6 +75,14 @@ define([
       self._group.on('dragend', function() {
         self._onDragEnd(self);
       });
+
+      self._group.on('mouseenter', function() {
+        self._layer._layer.getStage().container().style.cursor = 'grab';
+      });
+
+      self._group.on('mouseleave', function() {
+        self._layer._layer.getStage().container().style.cursor = 'default';
+      });
     }
   };
 
