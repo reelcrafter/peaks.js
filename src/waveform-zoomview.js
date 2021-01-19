@@ -16,7 +16,8 @@ define([
   // './animated-zoom-adapter',
   // './static-zoom-adapter',
   './utils',
-  'konva'
+  'konva',
+  'lodash.throttle'
 ], function(
     MouseDragHandler,
     PlayheadLayer,
@@ -27,7 +28,8 @@ define([
     // AnimatedZoomAdapter,
     // StaticZoomAdapter,
     Utils,
-    Konva) {
+    Konva,
+    _throttle) {
   'use strict';
 
   /**
@@ -130,9 +132,22 @@ define([
       onMouseDown: function(mousePosX) {
         this.initialFrameOffset = self._frameOffset;
         this.mouseDownX = mousePosX;
+
+        var pixelIndex = self._frameOffset + mousePosX;
+        var time = self.pixelsToTime(pixelIndex);
+
+        self._peaks.emit('zoomview.mousedown', time);
       },
 
-      onMouseMove: function(mousePosX) {
+      onMouseMove: function(eventType, mousePosX) {
+        if (eventType !== 'touchmove') {
+          var pixelIndex = self._frameOffset + mousePosX;
+          var time = self.pixelsToTime(pixelIndex);
+
+          self._peaks.emit('zoomview.drag', time);
+          return;
+        }
+
         // Moving the mouse to the left increases the time position of the
         // left-hand edge of the visible waveform.
         var diff = this.mouseDownX - mousePosX;
@@ -165,6 +180,33 @@ define([
           self._playheadLayer.updatePlayheadTime(time);
 
           self._peaks.player.seek(time);
+        }
+        else {
+          self._peaks.emit('zoomview.mouseup');
+        }
+      },
+
+      onMouseWheel: function(event) {
+        // Vertical scroll? If so, zoom
+        if (event.shiftKey) {
+          var seconds = self._peaks.player.getDuration();
+
+          if (!Utils.isValidTime(seconds)) {
+            return;
+          }
+
+          var maxScale = self._getScale(seconds);
+
+          self.setZoom({
+            scale: Utils.clamp(self._scale + event.deltaY * 16, 64, maxScale)
+          });
+        }
+        else {
+          var newFrameOffset = Utils.clamp(
+            self._frameOffset + event.deltaX, 0, self._pixelLength - self._width
+          );
+
+          self._updateWaveform(newFrameOffset);
         }
       }
     });
@@ -307,7 +349,7 @@ define([
             (Utils.objectHasProperty(options, 'seconds') && options.seconds === 'auto'));
   }
 
-  WaveformZoomView.prototype.setZoom = function(options) {
+  WaveformZoomView.prototype.setZoom = _throttle(function(options) {
     var scale;
 
     if (isAutoScale(options)) {
@@ -382,7 +424,7 @@ define([
     this._peaks.emit('zoom.update', scale, prevScale);
 
     return true;
-  };
+  }, 50);
 
   WaveformZoomView.prototype._resampleData = function(options) {
     this._data = this._originalWaveformData.resample(options);
@@ -641,7 +683,6 @@ define([
     this._height = this._container.clientHeight;
     this._stage.height(this._height);
 
-    this._waveformShape.fitToView();
     this._playheadLayer.fitToView();
     this._segmentsLayer.fitToView();
     this._pointsLayer.fitToView();

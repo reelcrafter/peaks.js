@@ -47,17 +47,20 @@ define([
    */
 
   function MouseDragHandler(stage, handlers) {
-    this._stage     = stage;
-    this._handlers  = handlers;
-    this._dragging  = false;
-    this._mouseDown = this._mouseDown.bind(this);
-    this._mouseUp   = this._mouseUp.bind(this);
-    this._mouseMove = this._mouseMove.bind(this);
+    this._stage      = stage;
+    this._handlers   = handlers;
+    this._dragging   = false;
+    this._mouseDown  = this._mouseDown.bind(this);
+    this._mouseUp    = this._mouseUp.bind(this);
+    this._mouseMove  = this._mouseMove.bind(this);
+    this._mouseWheel = this._mouseWheel.bind(this);
 
     this._stage.on('mousedown', this._mouseDown);
     this._stage.on('touchstart', this._mouseDown);
 
     this._mouseDownClientX = null;
+
+    stage.container().addEventListener('wheel', this._mouseWheel, false);
   }
 
   /**
@@ -95,6 +98,19 @@ define([
   };
 
   /**
+   * Mouse wheel event handler.
+   *
+   * @param {MouseEvent} event
+   */
+  MouseDragHandler.prototype._mouseWheel = function(event) {
+    event.preventDefault();
+
+    if (this._handlers.onMouseWheel) {
+      this._handlers.onMouseWheel(event);
+    }
+  };
+
+  /**
    * Mouse move event handler.
    *
    * @param {MouseEvent} event
@@ -115,7 +131,7 @@ define([
     if (this._handlers.onMouseMove) {
       var mousePosX = this._getMousePosX(clientX);
 
-      this._handlers.onMouseMove(mousePosX);
+      this._handlers.onMouseMove(event.type, mousePosX);
     }
   };
 

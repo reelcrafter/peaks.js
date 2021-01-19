@@ -126,12 +126,6 @@ declare module 'peaks.js' {
     fontStyle: string;
   }
 
-  interface LinearGradientColor {
-    linearGradientStart: number
-    linearGradientEnd: number
-    linearGradientColorStops: (string | number)[]
-  }
-
   /**
    * Parameters for the {@link createSegmentMarker} function.
    *
@@ -181,9 +175,9 @@ declare module 'peaks.js' {
     /** Color for segment end marker handles */
     segmentEndMarkerColor?: string;
     /** Color for the zoomed in waveform */
-    zoomWaveformColor?: string | LinearGradientColor;
+    zoomWaveformColor?: string;
     /** Color for the overview waveform */
-    overviewWaveformColor?: string | LinearGradientColor;
+    overviewWaveformColor?: string;
     /**
      * Color for the overview waveform rectangle
      * that shows what the zoom view shows
@@ -195,7 +189,7 @@ declare module 'peaks.js' {
      */
     overviewHighlightOffset?: number;
     /** Color for segments on the waveform */
-    segmentColor?: string | LinearGradientColor;
+    segmentColor?: string;
     /** Color of the play head */
     playheadColor?: string;
     /** Color of the play head text */
@@ -276,6 +270,9 @@ declare module 'peaks.js' {
     'segments.exit': (segment: Segment) => void;
     'overview.dblclick': (time: number) => void;
     'zoomview.dblclick': (time: number) => void;
+    'zoomview.mousedown': (time: number) => void;
+    'zoomview.drag': (time: number) => void;
+    'zoomview.mouseup': () => void;
     'zoom.update': (currentZoomLevel: number, previousZoomLevel: number) => void;
     'player.canplay': () => void;
     'player.ended': () => void;
