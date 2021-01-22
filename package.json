@@ -25,7 +25,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/bbc/peaks.js.git"
+    "url": "git://github.com/reelcrafter/peaks.js.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/@reelcrafter"
   },
   "license": "LGPL-3.0",
   "engines": {
