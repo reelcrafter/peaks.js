@@ -3,7 +3,7 @@
  * @author Evan Louie <evan.louie@microsoft.com> (https://evanlouie.com)
  */
 
-declare module 'peaks.js' {
+declare module '@reelcrafter/peaks.js' {
   interface SegmentAddOptions {
     startTime: number;
     endTime: number;
