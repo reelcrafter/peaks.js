@@ -109,7 +109,9 @@ define([
     );
     self._highlightLayer.addToStage(self._stage);
 
-    self._createAxisLabels();
+    if (!self._options.hideAxis) {
+      self._createAxisLabels();
+    }
 
     self._playheadLayer = new PlayheadLayer({
       player: self._peaks.player,
