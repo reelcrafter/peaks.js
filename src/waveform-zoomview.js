@@ -205,7 +205,7 @@ define([
 
           var maxScale = self._getScale(seconds);
 
-          self.setZoom({
+          self.throttledSetZoom({
             scale: Utils.clamp(self._scale + event.deltaY * 16, 64, maxScale)
           });
         }
@@ -357,7 +357,7 @@ define([
             (Utils.objectHasProperty(options, 'seconds') && options.seconds === 'auto'));
   }
 
-  WaveformZoomView.prototype.setZoom = _throttle(function(options) {
+  WaveformZoomView.prototype.setZoom = function(options) {
     var scale;
 
     if (isAutoScale(options)) {
@@ -432,6 +432,10 @@ define([
     this._peaks.emit('zoom.update', scale, prevScale);
 
     return true;
+  };
+
+  WaveformZoomView.prototype.throttledSetZoom = _throttle(function(options) {
+    this.setZoom(options);
   }, 50);
 
   WaveformZoomView.prototype._resampleData = function(options) {
