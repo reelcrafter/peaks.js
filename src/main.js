@@ -55,6 +55,11 @@ define([
       zoomLevels:            [512, 1024, 2048, 4096],
 
       /**
+       * Enable wheel/trackpad interaction for scrolling and zooming
+       */
+      gestures:            true,
+
+      /**
        * Data URI where to get the waveform data.
        *
        * If a string, we assume that `this.dataUriDefaultFormat` is the default

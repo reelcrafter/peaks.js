@@ -187,6 +187,12 @@ define([
       },
 
       onMouseWheel: function(event) {
+        if (!self._options.gestures) {
+          return;
+        }
+
+        event.preventDefault();
+
         // Vertical scroll? If so, zoom
         if (event.shiftKey) {
           var seconds = self._peaks.player.getDuration();
