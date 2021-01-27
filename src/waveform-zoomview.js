@@ -109,7 +109,9 @@ define([
     self._pointsLayer = new PointsLayer(peaks, self, true);
     self._pointsLayer.addToStage(self._stage);
 
-    self._createAxisLabels();
+    if (!self._options.hideAxis) {
+      self._createAxisLabels();
+    }
 
     self._playheadLayer = new PlayheadLayer({
       player: self._peaks.player,
@@ -614,7 +616,9 @@ define([
     this._playheadLayer.updatePlayheadTime(this.pixelsToTime(playheadPixel));
 
     this._waveformLayer.draw();
-    this._axisLayer.draw();
+    if (this._axisLayer) {
+      this._axisLayer.draw();
+    }
 
     var frameStartTime = this.pixelsToTime(this._frameOffset);
     var frameEndTime   = this.pixelsToTime(this._frameOffset + this._width);
