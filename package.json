@@ -46,7 +46,8 @@
     "copy-demo-files": "copyfiles test_data/sample.mp3 test_data/07023003.mp3 test_data/07023003-2channel.dat demo",
     "prestart": "npm run build && npm run copy-demo-files",
     "start": "serve --listen 8080 --no-clipboard demo",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "clean": "rm demo/peaks.js* peaks.js peaks.js.map"
   },
   "devDependencies": {
     "browserify": "~17.0.0",
