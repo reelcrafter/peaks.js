@@ -339,7 +339,7 @@ declare module '@reelcrafter/peaks.js' {
       getCurrentTime: () => number;
       getDuration: () => number;
       seek: (time: number) => void;
-      playSegment: (segment: Segment, loop?: boolean) => void;
+      playSegment: (segment: Segment, loop?: boolean, fadeIn?: number, fadeOut?: number) => void;
     };
     /** Views API */
     views: {

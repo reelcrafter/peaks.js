@@ -590,9 +590,9 @@ instance.player.seek(5.85);
 const time = instance.player.getCurrentTime();
 ```
 
-### `instance.player.playSegment(segment[, loop])`
+### `instance.player.playSegment(segment[, loop, fadeIn, fadeOut])`
 
-Plays a given segment of the media, with optional looped playback.
+Plays a given segment of the media, with optional looped playback and fade in/out (in seconds).
 
 ```js
 const segment = instance.segments.add({
@@ -604,8 +604,8 @@ const segment = instance.segments.add({
 // Plays from 5.0 to 15.0 then stops.
 instance.player.playSegment(segment);
 
-// Plays from 5.0 to 15.0 and loops.
-instance.player.playSegment(segment, true);
+// Plays from 5.0 to 15.0 and loops, with a 2-second fade-in and 5-second fade-out.
+instance.player.playSegment(segment, true, 2, 5);
 ```
 
 ## Views API

@@ -12,6 +12,38 @@ define([
 ], function(Utils) {
   'use strict';
 
+  var FADE_INTERVAL = 13;
+
+  function swing(percent) {
+    return 0.5 - Math.cos(percent * Math.PI) / 2;
+  }
+
+  function fadeAudio(audioEl, newVolume, duration, callback) {
+    var originalVolume = audioEl.volume;
+    var delta = newVolume - originalVolume;
+
+    if (!delta || !duration) {
+      audioEl.volume = newVolume;
+      if (callback) {
+        callback();
+      }
+    }
+
+    var ticks = Math.floor(duration / FADE_INTERVAL);
+    var tick = 1;
+
+    var timer = setInterval(function() {
+      audioEl.volume = originalVolume + swing(tick / ticks) * delta;
+
+      if (++tick === ticks + 1) {
+        clearInterval(timer);
+        if (callback) {
+          callback();
+        }
+      }
+    }, FADE_INTERVAL);
+  }
+
   function getAllPropertiesFrom(adapter) {
     var allProperties = [];
     var obj = adapter;
@@ -161,7 +193,7 @@ define([
    * @param {Boolean} loop If true, playback is looped.
    */
 
-  Player.prototype.playSegment = function(segment, loop) {
+  Player.prototype.playSegment = function(segment, loop, fadeIn, fadeOut) {
     var self = this;
 
     if (!segment ||
