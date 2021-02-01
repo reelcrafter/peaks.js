@@ -203,13 +203,27 @@ define([
       return;
     }
 
+    self._fadeIn = fadeIn;
+    self._fadeOut = fadeOut;
+    self._fading = false;
     self._segment = segment;
     self._loop = loop;
 
     // Set audio time to segment start time
     self.seek(segment.startTime);
 
+    if (fadeIn) {
+      self._adapter._mediaElement.volume = 0;
+    }
+    else {
+      self._adapter._mediaElement.volume = 1;
+    }
+
     self._peaks.once('player.playing', function() {
+      if (fadeIn) {
+        fadeAudio(self._adapter._mediaElement, 1, fadeIn * 1000);
+      }
+
       if (!self._playingSegment) {
         self._playingSegment = true;
 
@@ -224,12 +238,14 @@ define([
   };
 
   Player.prototype._playSegmentTimerCallback = function() {
+    var currentTime = this.getCurrentTime();
+
     if (!this.isPlaying()) {
       this.pause();
       this._playingSegment = false;
       return;
     }
-    else if (this.getCurrentTime() >= this._segment.endTime) {
+    else if (currentTime >= this._segment.endTime) {
       if (this._loop) {
         this.seek(this._segment.startTime);
       }
@@ -239,6 +255,14 @@ define([
         this._playingSegment = false;
         return;
       }
+    }
+
+    if (
+      this._fadeOut && !this._fading &&
+      currentTime >= this._segment.endTime - this._fadeOut
+    ) {
+      this._fading = true;
+      fadeAudio(this._adapter._mediaElement, 0, this._fadeOut * 1000);
     }
 
     window.requestAnimationFrame(this._playSegmentTimerCallback);
