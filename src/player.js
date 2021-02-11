@@ -205,7 +205,7 @@ define([
 
     self._fadeIn = fadeIn;
     self._fadeOut = fadeOut;
-    self._fading = false;
+    self._fadingOut = false;
     self._segment = segment;
     self._loop = loop;
 
@@ -240,6 +240,17 @@ define([
   Player.prototype._playSegmentTimerCallback = function() {
     var currentTime = this.getCurrentTime();
 
+    if (
+      !this.isPlaying() &&
+      this._fadingOut &&
+      this._adapter._mediaElement.volume !== 0
+    ) {
+      return window.requestAnimationFrame(this._playSegmentTimerCallback);
+    }
+    else if (this._fadingOut && this._adapter._mediaElement.volume === 0) {
+      return this._peaks.emit('player.ended');
+    }
+
     if (!this.isPlaying()) {
       this.pause();
       this._playingSegment = false;
@@ -251,18 +262,22 @@ define([
       }
       else {
         this.pause();
-        this._peaks.emit('player.ended');
         this._playingSegment = false;
-        this._adapter._mediaElement.volume = 1;
-        return;
+
+        if (this._adapter._mediaElement.volume === 0) {
+          this._peaks.emit('player.ended');
+          return;
+        }
+
+        return window.requestAnimationFrame(this._playSegmentTimerCallback);
       }
     }
 
     if (
-      this._fadeOut && !this._fading &&
+      this._fadeOut && !this._fadingOut &&
       currentTime >= this._segment.endTime - this._fadeOut
     ) {
-      this._fading = true;
+      this._fadingOut = true;
       fadeAudio(this._adapter._mediaElement, 0, this._fadeOut * 1000);
     }
 
