@@ -253,7 +253,7 @@ define([
         this.pause();
         this._peaks.emit('player.ended');
         this._playingSegment = false;
-        self._adapter._mediaElement.volume = 1;
+        this._adapter._mediaElement.volume = 1;
         return;
       }
     }
