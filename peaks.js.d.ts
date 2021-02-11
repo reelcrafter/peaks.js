@@ -279,10 +279,10 @@ declare module '@reelcrafter/peaks.js' {
     'zoomview.mouseup': () => void;
     'zoom.update': (currentZoomLevel: number, previousZoomLevel: number) => void;
     'player.canplay': () => void;
-    'player.ended': () => void;
     'player.error': (error: any) => void;
     'player.pause': (time: number) => void;
     'player.playing': (time: number) => void;
+    'player.ended': () => void;
     'player.seeked': (time: number) => void;
     'player.timeupdate': (time: number) => void;
   }
