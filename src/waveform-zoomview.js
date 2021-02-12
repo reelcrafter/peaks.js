@@ -196,26 +196,26 @@ define([
         event.preventDefault();
 
         // Vertical scroll? If so, zoom
-        if (event.shiftKey) {
-          var seconds = self._peaks.player.getDuration();
+        // if (event.shiftKey) {
+        //   var seconds = self._peaks.player.getDuration();
+        //
+        //   if (!Utils.isValidTime(seconds)) {
+        //     return;
+        //   }
+        //
+        //   var maxScale = self._getScale(seconds);
+        //
+        //   self.throttledSetZoom({
+        //     scale: Utils.clamp(self._scale + event.deltaY * 16, 64, maxScale)
+        //   });
+        // }
+        // else {
+        var newFrameOffset = Utils.clamp(
+          self._frameOffset + event.deltaX, 0, self._pixelLength - self._width
+        );
 
-          if (!Utils.isValidTime(seconds)) {
-            return;
-          }
-
-          var maxScale = self._getScale(seconds);
-
-          self.throttledSetZoom({
-            scale: Utils.clamp(self._scale + event.deltaY * 16, 64, maxScale)
-          });
-        }
-        else {
-          var newFrameOffset = Utils.clamp(
-            self._frameOffset + event.deltaX, 0, self._pixelLength - self._width
-          );
-
-          self._updateWaveform(newFrameOffset);
-        }
+        self._updateWaveform(newFrameOffset);
+        // }
       }
     });
 
