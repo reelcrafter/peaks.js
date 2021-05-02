@@ -248,6 +248,10 @@ define([
       return window.requestAnimationFrame(this._playSegmentTimerCallback);
     }
     else if (this._fadingOut && this._adapter._mediaElement.volume === 0) {
+      if (this.isPlaying()) {
+        this.pause();
+        this._playingSegment = false;
+      }
       return this._peaks.emit('player.ended');
     }
 
