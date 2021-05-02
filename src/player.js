@@ -205,6 +205,7 @@ define([
 
     self._fadeIn = fadeIn;
     self._fadeOut = fadeOut;
+    self._fadingIn = false;
     self._fadingOut = false;
     self._segment = segment;
     self._loop = loop;
@@ -221,7 +222,10 @@ define([
 
     self._peaks.once('player.playing', function() {
       if (fadeIn) {
-        fadeAudio(self._adapter._mediaElement, 1, fadeIn * 1000);
+        self._fadingIn = true;
+        fadeAudio(self._adapter._mediaElement, 1, fadeIn * 1000, function() {
+          self._fadingIn = false;
+        });
       }
 
       if (!self._playingSegment) {
@@ -247,7 +251,11 @@ define([
     ) {
       return window.requestAnimationFrame(this._playSegmentTimerCallback);
     }
-    else if (this._fadingOut && this._adapter._mediaElement.volume === 0) {
+    else if (
+      !this._loop &&
+      this._fadingOut &&
+      this._adapter._mediaElement.volume === 0
+    ) {
       if (this.isPlaying()) {
         this.pause();
         this._playingSegment = false;
@@ -263,6 +271,32 @@ define([
     else if (currentTime >= this._segment.endTime) {
       if (this._loop) {
         this.seek(this._segment.startTime);
+
+        if (this._fadeIn) {
+          this._adapter._mediaElement.volume = 0;
+        }
+        else {
+          this._adapter._mediaElement.volume = 1;
+        }
+
+        this._fadingOut = false;
+
+        if (this._fadeIn && !this._fadingIn) {
+          var self = this;
+
+          this._peaks.once('player.playing', function() {
+            if (self._fadeIn) {
+              self._fadingIn = true;
+              fadeAudio(
+                self._adapter._mediaElement,
+                1,
+                self._fadeIn * 1000,
+                function() {
+                  self._fadingIn = false;
+                });
+            }
+          });
+        }
       }
       else {
         this.pause();
@@ -278,7 +312,9 @@ define([
     }
 
     if (
-      this._fadeOut && !this._fadingOut &&
+      this._fadeOut &&
+      !this._fadingOut &&
+      !this._fadingIn &&
       currentTime >= this._segment.endTime - this._fadeOut
     ) {
       this._fadingOut = true;
